@@ -1,16 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function ExpenseItem() {
+function ExpenseItem({ title }) {
     return (
-        <View style={styles.container}>
-            <Text>Expense Item</Text>
+        <View style={styles.item}>
+            <Text>{title}</Text>
         </View>
     );
 }
 
+export default ExpenseItem;
+
 const styles = StyleSheet.create({
-    container: {
-        marginVertical: 5,
+    item: {
+        padding: 10,
+        marginVertical: 10,
+        backgroundColor: '#e0e0e0',
+        borderColor: '#888',
+        borderWidth: 1,
+        borderRadius: 6,
     },
 });
