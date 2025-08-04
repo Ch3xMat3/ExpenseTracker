@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function ExpenseItem({ id, description, amount, onDelete }) {
     const confirmDelete = () => {
@@ -20,8 +21,16 @@ export default function ExpenseItem({ id, description, amount, onDelete }) {
     return (
         <Pressable onLongPress={confirmDelete}>
             <View style={styles.item}>
-                <Text style={styles.description}>{description}</Text>
-                <Text style={styles.amount}>${amount.toFixed(2)}</Text>
+                <MaterialIcons 
+                    name="attach-money" 
+                    size={24} 
+                    color="#4caf50"
+                    style={styles.icon}
+                />
+                <View style={styles.textContainer}>
+                    <Text style={styles.description}>{description}</Text>
+                    <Text style={styles.amount}>${amount.toFixed(2)}</Text>
+                </View>
             </View>
         </Pressable>
         
@@ -30,19 +39,28 @@ export default function ExpenseItem({ id, description, amount, onDelete }) {
 
 const styles = StyleSheet.create({
     item: {
-        backgroundColor: '#eee',
+        backgroundColor: '#f1f1f1',
         padding: 12,
-        marginVertical: 6,
-        marginHorizontal: 20,
-        borderRadius: 6,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        borderRadius: 10,
+        elevation: 2,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    icon: {
+        marginRight: 12,
+    },
+    textContainer: {
+        flex: 1,
     },
     description: {
         fontSize: 16,
+        fontWeight: 'bold',
     },
     amount: {
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 14,
+        color: '#555',
     },
 });
