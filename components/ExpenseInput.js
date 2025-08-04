@@ -1,11 +1,16 @@
 import { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import { Modal, View, TextInput, Button, StyleSheet, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export default function ExpenseInput({ onAddExpense }) {
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Food');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [categories, setCategories] = useState ([
+    'Food', 'Travel', 'Utilities', 'Shopping'
+  ]);
 
   const addExpenseHandler = () => {
     const amountNumber = parseFloat(enteredAmount);
@@ -25,6 +30,25 @@ export default function ExpenseInput({ onAddExpense }) {
     setEnteredDescription('');
     setEnteredAmount('');
     setSelectedCategory('Food');
+  };
+
+  const handleAddCategory = () => {
+    const trimmed = newCategory.trim();
+
+    if (!trimmed) {
+        Alert.alert('Invalid input', 'Category name cannot be empty.');
+        return;
+    }
+
+    if (categories.includes(trimmed)) {
+        Alert.alert('Duplicate', 'Category already exists.');
+        return;
+    }
+
+    setCategories((prev) => [...prev, trimmed]);
+    setNewCategory('');
+    setModalVisible(false);
+    setSelectedCategory(trimmed);
   };
 
   return (
@@ -49,13 +73,31 @@ export default function ExpenseInput({ onAddExpense }) {
             onValueChange={(itemValue) => setSelectedCategory(itemValue)}
             style={styles.picker}
         >
-            <Picker.Item label="Food" value="Food" />
-            <Picker.Item label="Travel" value="Travel" />
-            <Picker.Item label="Utilities" value="Utilities" />
-            <Picker.Item label="Shopping" value="Shopping" />
-            <Picker.Item label="Other" value="Other" />
+            {categories.map((cat) => (
+                <Picker.Item label={cat} value={cat} key={cat} />
+            ))}
         </Picker>
       </View>
+      <View style={{ marginBottom: 12 }}>
+        <Button title="Add New Category" onPress={() => setModalVisible(true)} />
+      </View>
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Add New Category</Text>
+                    <TextInput
+                        placeholder="Category name"
+                        value={newCategory}
+                        onChangeText={setNewCategory}
+                        style={styles.modalInput}
+                    />
+                    <Button title="Save" onPress={handleAddCategory} />
+                    <View style={{ marginTop: 10 }}>
+                        <Button title="Cancel" color="gray" onPress={() => setModalVisible(false)} />
+                    </View>
+                </View>
+            </View>
+      </Modal>      
       <Button title="Add Expense" onPress={addExpenseHandler} />
     </View>
   );
@@ -83,5 +125,30 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 55,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalInput: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 10,
   },
 });
