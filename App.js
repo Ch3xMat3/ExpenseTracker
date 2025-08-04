@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View, FlatList, Text } from 'react-native';
 import ExpenseInput from './components/ExpenseInput';
 import ExpenseItem from './components/ExpenseItem';
@@ -25,14 +25,17 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Expense tracker App!</Text>
-      <ExpenseInput onAddExpense={addExpenseHandler} />
+      <ExpenseInput 
+        onAddExpense={addExpenseHandler}
+      />
       <FlatList
         data={expenses}
         renderItem={(itemData) => (
           <ExpenseItem 
             id={itemData.item.id}
             description={itemData.item.description}
-            amount={itemData.item.amount} 
+            amount={itemData.item.amount}
+            category={itemData.item.category}
             onDelete={deleteExpenseHandler}
           />
         )}

@@ -1,8 +1,7 @@
-import React from 'react';
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function ExpenseItem({ id, description, amount, onDelete }) {
+export default function ExpenseItem({ id, description, amount, category, onDelete }) {
     const confirmDelete = () => {
         Alert.alert(
             'Delete Expense',
@@ -30,6 +29,7 @@ export default function ExpenseItem({ id, description, amount, onDelete }) {
                 <View style={styles.details}>
                     <Text style={styles.description}>{description}</Text>
                     <Text style={styles.amount}>${amount.toFixed(2)}</Text>
+                    <Text style={styles.category}>Category: {category}</Text>
                 </View>
             </View>
         </Pressable>
@@ -66,5 +66,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#666',
         marginTop: 4,
+    },
+    category: {
+        fontSize: 12,
+        color: '#999',
+        marginTop: 2,
     },
 });

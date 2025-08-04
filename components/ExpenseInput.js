@@ -1,62 +1,87 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert} from 'react-native';
+import { useState } from 'react';
+import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 export default function ExpenseInput({ onAddExpense }) {
-    const [enteredDescription, setEnteredDescription] = useState('');
-    const [enteredAmount, setEnteredAmount] = useState('');
+  const [enteredDescription, setEnteredDescription] = useState('');
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Food');
 
-    const descriptionInputHandler = (text) => {
-        setEnteredDescription(text);
-    };
+  const addExpenseHandler = () => {
+    const amountNumber = parseFloat(enteredAmount);
 
-    const amountInputHandler = (text) => {
-        setEnteredAmount(text);
-    };
+    if (!enteredDescription.trim() || isNaN(amountNumber) || amountNumber <= 0) {
+        Alert.alert('Invalid input', 'Please enter a valid description and amount.');
+        return;
+    }
 
-    const addExpenseHandler = () => {
-        const amountNumber = parseFloat(enteredAmount);
+    onAddExpense({
+      description: enteredDescription,
+      amount: amountNumber,
+      category: selectedCategory,
+    });
 
-        if (!enteredDescription.trim() || isNaN(amountNumber) || amountNumber <= 0) {
-            Alert.alert('Invalid input', 'Please enter a valid description and amount.');
-            return;
-        }
+    // Clear inputs
+    setEnteredDescription('');
+    setEnteredAmount('');
+    setSelectedCategory('Food');
+  };
 
-        onAddExpense({ description: enteredDescription, amount: amountNumber });
-
-        // Clear inputs
-        setEnteredDescription('');
-        setEnteredAmount('');
-    };
-
-    return (
-        <View style={styles.inputContainer}>
-            <TextInput
-                placeholder="Description"
-                style={styles.input}
-                onChangeText={descriptionInputHandler}
-                value={enteredDescription}
-            />
-            <TextInput
-                placeholder="Amount"
-                style={styles.input}
-                keyboardType="decimal-pad"
-                onChangeText={amountInputHandler}
-                value={enteredAmount}
-            />
-            <Button title="Add Expense" onPress={addExpenseHandler} />
-        </View>
-    );
+  return (
+    <View style={styles.inputContainer}>
+      <TextInput
+        placeholder="Description"
+        style={styles.input}
+        value={enteredDescription}
+        onChangeText={setEnteredDescription}
+      />
+      <TextInput
+        placeholder="Amount"
+        style={styles.input}
+        keyboardType="decimal-pad"
+        value={enteredAmount}
+        onChangeText={setEnteredAmount}
+      />
+      <Text style={styles.label}>Category</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+            selectedValue={selectedCategory}
+            onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+            style={styles.picker}
+        >
+            <Picker.Item label="Food" value="Food" />
+            <Picker.Item label="Travel" value="Travel" />
+            <Picker.Item label="Utilities" value="Utilities" />
+            <Picker.Item label="Shopping" value="Shopping" />
+            <Picker.Item label="Other" value="Other" />
+        </Picker>
+      </View>
+      <Button title="Add Expense" onPress={addExpenseHandler} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    inputContainer: {
-        margin: 20,
-    },
-    input: {
-        borderBottomColor: '#888',
-        borderBottomWidth: 1,
-        marginBottom: 10,
-        paddingVertical: 6,
-        paddingHorizontal: 2,
-    },
+  inputContainer: {
+    padding: 20,
+  },
+  input: {
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    marginBottom: 12,
+  },
+  label: {
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc', // light gray border
+    borderRadius: 8,
+    overflow: 'hidden', // important for rounded corners on android
+    marginBottom: 10,
+  },
+  picker: {
+    height: 55,
+  },
 });
