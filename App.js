@@ -1,17 +1,50 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import ExpenseInput from './components/ExpenseInput';
 import ExpenseItem from './components/ExpenseItem';
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
 
-  const addExpenseHandler = (expense) => {
+  // Load expenses from AsyncStorage on app startup
+  useEffect(() => {
+    const loadExpenses = async () => {
+      try {
+        const storedExpenses = await AsyncStorage.getItem('expenses');
+        if (storedExpenses !== null) {
+          const parsedExpenses = JSON.parse(storedExpenses);
+          setExpenses(parsedExpenses);
+          console.log('Loaded expenses:', parsedExpenses); // Debug log
+        }
+      } catch (error) {
+        console.error('Failed to load expenses:', error);
+      }
+    };
+
+    loadExpenses();
+  }, []);
+
+  // Save expenses to AsyncStorage whenever they change
+  useEffect(() => {
+    const saveExpenses = async () => {
+      try {
+        await AsyncStorage.setItem('expenses', JSON.stringify(expenses));
+      } catch (error) {
+        console.error('Failed to save expenses:', error);
+      }
+    };
+
+    saveExpenses();
+  }, [expenses]);
+
+  const addExpenseHandler = async (expense) => {
     const newExpense = { id: Math.random().toString(), ...expense };
 
     setExpenses((currentExpenses) => {
       const updatedExpenses = [...currentExpenses, newExpense];
-      console.log('Updated Expenses:', updatedExpenses);
+      AsyncStorage.setItem('expenses', JSON.stringify(updatedExpenses));
       return updatedExpenses;
     });
   };
