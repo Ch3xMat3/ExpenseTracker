@@ -16,6 +16,12 @@ export default function App() {
     });
   };
 
+  const deleteExpenseHandler = (id) => {
+    setExpenses((currentExpenses) =>
+      currentExpenses.filter((expense) => expense.id !== id)
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Expense tracker App!</Text>
@@ -24,8 +30,10 @@ export default function App() {
         data={expenses}
         renderItem={(itemData) => (
           <ExpenseItem 
+            id={itemData.item.id}
             description={itemData.item.description}
             amount={itemData.item.amount} 
+            onDelete={deleteExpenseHandler}
           />
         )}
         keyExtractor={(item) => item.id}
