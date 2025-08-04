@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 import ExpenseInput from './components/ExpenseInput';
 import ExpenseItem from './components/ExpenseItem';
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
 
-  const addExpenseHandler = (expenseText) => {
-    setExpenses((currentExpenses) => [
-      ...currentExpenses,
-      { id: Math.random().toString(), value: expenseText }
-    ]);
+  const addExpenseHandler = (expense) => {
+    const newExpense = { id: Math.random().toString(), ...expense };
+
+    setExpenses((currentExpenses) => {
+      const updatedExpenses = [...currentExpenses, newExpense];
+      console.log('Updated Expenses:', updatedExpenses);
+      return updatedExpenses;
+    });
   };
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Expense tracker App!</Text>
       <ExpenseInput onAddExpense={addExpenseHandler} />
       <FlatList
         data={expenses}
-        rednerItem={(itemData) => (
-          <ExpenseItem title={itemData.item.value} />
+        renderItem={(itemData) => (
+          <ExpenseItem 
+            description={itemData.item.description}
+            amount={itemData.item.amount} 
+          />
         )}
         keyExtractor={(item) => item.id}
       />
@@ -29,8 +36,13 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 50,
     flex: 1,
-    backgroundColor: '#fff'
-  }
+    marginTop: 50,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
 });
