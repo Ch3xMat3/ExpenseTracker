@@ -16,8 +16,8 @@ export default function ExpensesScreen({ expenses, onDeleteExpense }) {
 
     const renderExpenseItem = ({ item }) => (
         <ExpenseItem
-            id={item.id}
             description={item.description}
+            date={item.date}
             amount={item.amount}
             category={item.category}
             onDelete={() => confirmDelete(item.id)}

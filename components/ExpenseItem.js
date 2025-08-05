@@ -1,7 +1,9 @@
 import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
-export default function ExpenseItem({ id, description, amount, category, onDelete }) {
+export default function ExpenseItem({ description, date, amount, category, onDelete }) {
+    const formattedDate = new Date(date).toLocaleDateString();
+
     return (
         <Pressable onLongPress={onDelete}>
             <View style={styles.card}>
@@ -15,6 +17,9 @@ export default function ExpenseItem({ id, description, amount, category, onDelet
                     <Text style={styles.description}>{description}</Text>
                     <Text style={styles.amount}>${amount.toFixed(2)}</Text>
                     <Text style={styles.category}>Category: {category}</Text>
+                </View>
+                <View style={styles.dateContainer}>
+                    <Text style={styles.date}>{formattedDate}</Text>
                 </View>
             </View>
         </Pressable>
@@ -55,5 +60,14 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
         marginTop: 2,
+    },
+    dateContainer: {
+        justifyContent: 'flex-start',
+        alignItems: 'flex-end',
+        marginLeft: 8,
+    },
+    date: {
+        fontSize: 12,
+        color: '#888',
     },
 });
