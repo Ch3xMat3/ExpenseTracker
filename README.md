@@ -17,7 +17,7 @@ A simple and intuitive mobile app built with **React Native** and **Expo** for t
 
 ## 📸 Screenshot
 
-![Screenshot of app running on phone](assets/ExpenseTrackerApp.jpg)
+<img src="assets/ExpenseTrackerApp.jpg" alt="Screenshot of app running on phone" width="300" />
 
 ## 🚀 Getting Started
 
