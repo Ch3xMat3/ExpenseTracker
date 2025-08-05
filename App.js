@@ -1,58 +1,74 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Text } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ExpenseInput from './components/ExpenseInput';
 import ExpenseItem from './components/ExpenseItem';
+import AddCategoryModal from './components/AddCategoryModal';
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
+  const [categories, setCategories] = useState(['Food', 'Travel', 'Utilities', 'Shopping']);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
 
   // Load expenses from AsyncStorage on app startup
   useEffect(() => {
-    const loadExpenses = async () => {
+    const loadData = async () => {
       try {
         const storedExpenses = await AsyncStorage.getItem('expenses');
-        if (storedExpenses !== null) {
-          const parsedExpenses = JSON.parse(storedExpenses);
-          setExpenses(parsedExpenses);
-          console.log('Loaded expenses:', parsedExpenses); // Debug log
-        }
+        if (storedExpenses) setExpenses(JSON.parse(storedExpenses));
+
+        const storedCategories = await AsyncStorage.getItem('categories');
+        if (storedCategories) setCategories(JSON.parse(storedCategories));
       } catch (error) {
         console.error('Failed to load expenses:', error);
       }
     };
 
-    loadExpenses();
+    loadData();
   }, []);
 
-  // Save expenses to AsyncStorage whenever they change
+  // Save expenses when changed
   useEffect(() => {
     const saveExpenses = async () => {
       try {
         await AsyncStorage.setItem('expenses', JSON.stringify(expenses));
       } catch (error) {
-        console.error('Failed to save expenses:', error);
+        console.error('Failed to save expenses', error);
       }
     };
 
     saveExpenses();
   }, [expenses]);
 
-  const addExpenseHandler = async (expense) => {
-    const newExpense = { id: Math.random().toString(), ...expense };
+  // Save categories when changed
+  useEffect(() => {
+    const saveCategories = async () => {
+      try {
+        await AsyncStorage.setItem('categories', JSON.stringify(categories));
+      } catch (error) {
+        console.error('Failed to save categories', error);
+      }
+    };
+    
+    saveCategories();
+  }, [categories]);
 
-    setExpenses((currentExpenses) => {
-      const updatedExpenses = [...currentExpenses, newExpense];
-      AsyncStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-      return updatedExpenses;
-    });
+  // Add expense
+  const addExpenseHandler = (expense) => {
+    const newExpense = { id: Math.random().toString(), ...expense };
+    setExpenses((currentExpenses) => [...currentExpenses, newExpense]);
   };
 
+  // Delete expense
   const deleteExpenseHandler = (id) => {
-    setExpenses((currentExpenses) =>
-      currentExpenses.filter((expense) => expense.id !== id)
-    );
+    setExpenses((currentExpenses) => currentExpenses.filter((expense) => expense.id !== id));
+  };
+
+  // Add category
+  const addCategoryHandler = (newCategory) => {
+    setCategories((currentCategories) => [...currentCategories, newCategory]);
+    setIsCategoryModalVisible(false);
   };
 
   return (
@@ -60,6 +76,18 @@ export default function App() {
       <Text style={styles.title}>Expense tracker App!</Text>
       <ExpenseInput 
         onAddExpense={addExpenseHandler}
+        categories={categories}
+        onAddCategory={addCategoryHandler}
+      />
+      <Button
+        title="Add New Category"
+        onPress={() => setIsCategoryModalVisible(true)}
+      />
+      <AddCategoryModal
+        visible={isCategoryModalVisible}
+        onAddCategory={addCategoryHandler}
+        onClose={() => setIsCategoryModalVisible(false)}
+        categories={categories}
       />
       <FlatList
         data={expenses}
