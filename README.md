@@ -61,3 +61,26 @@ npx expo start -c --tunnel
 >The `-c` flag clears the Metro bundler cache, and `--tunnel` helps establish a connection if your device can't connect over LAN.
 
 4. Scan the QR code with the Expo Go app on your phone.
+
+## 📦 Dependencies
+
+This project uses the following libraries and are installed automatically when running `npm install`:
+
+### Runtime Dependencies
+
+- **@expo/vector-icons** - Icon set for React Native (used with Expo)
+- **@react-native-async-storage/async-storage** - Persistent local storage for saving data like expenses and categories
+- **@react-native-picker/picker** - Dropdown picker component for category selection
+- **@react-navigation/native** - Core utilities for navigation between screens
+- **@react-navigation/native-stack** - Native stack navigator for screen transitions
+- **expo** - Framework for universal React applications
+- **expo-status-bar** - A drop-in replacement for the native status bar
+- **react** - The core React library for building UI
+- **react-native** - Framework for building native apps using React
+- **react-native-safe-area-context** - Handles safe area insets on modern phones
+- **react-native-screens** - Optimized screen management for navigation
+
+### Development Dependencies
+
+- **@babel/core** - Babel compiler core, used by Metro bundler and Expo for transforming code
+

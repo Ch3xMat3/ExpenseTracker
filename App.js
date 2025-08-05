@@ -1,10 +1,15 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList, Text, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, View, Text, Button } from 'react-native';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ExpenseInput from './components/ExpenseInput';
-import ExpenseItem from './components/ExpenseItem';
+import ExpensesScreen from './screens/ExpensesScreen';
 import AddCategoryModal from './components/AddCategoryModal';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
@@ -71,40 +76,62 @@ export default function App() {
     setIsCategoryModalVisible(false);
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Expense tracker App!</Text>
-      <ExpenseInput 
-        onAddExpense={addExpenseHandler}
-        categories={categories}
-        onAddCategory={addCategoryHandler}
-      />
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Add New Category"
-          onPress={() => setIsCategoryModalVisible(true)}
+  // Screen to add expenses, categories, and open category modal
+  function AddExpenseScreen({ navigation }) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Expense tracker App!</Text>
+        <ExpenseInput
+          onAddExpense={addExpenseHandler}
+          categories={categories}
         />
-      </View>
-      <AddCategoryModal
-        visible={isCategoryModalVisible}
-        onAddCategory={addCategoryHandler}
-        onClose={() => setIsCategoryModalVisible(false)}
-        categories={categories}
-      />
-      <FlatList
-        data={expenses}
-        renderItem={(itemData) => (
-          <ExpenseItem 
-            id={itemData.item.id}
-            description={itemData.item.description}
-            amount={itemData.item.amount}
-            category={itemData.item.category}
-            onDelete={deleteExpenseHandler}
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Add New Category"
+            onPress={() => setIsCategoryModalVisible(true)}
           />
-        )}
-        keyExtractor={(item) => item.id}
+        </View>
+        <AddCategoryModal
+          visible={isCategoryModalVisible}
+          onAddCategory={addCategoryHandler}
+          onClose={() => setIsCategoryModalVisible(false)}
+          categories={categories}
+        />
+        <View style={styles.buttonContainer}>
+          <Button
+            title="View Expenses"
+            onPress={() => navigation.navigate('ExpensesList')}
+          />
+        </View>
+      </View>
+    );
+  }
+
+  // Screen to display the list of expenses
+  function ExpensesListScreen() {
+    return (
+      <ExpensesScreen
+        expenses={expenses}
+        onDeleteExpense={deleteExpenseHandler}
       />
-    </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="AddExpense"
+          component={AddExpenseScreen}
+          options={{ title: 'Add Expense' }}
+        />
+        <Stack.Screen
+          name="ExpensesList"
+          component={ExpensesListScreen}
+          options={{ title: 'Expenses List' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

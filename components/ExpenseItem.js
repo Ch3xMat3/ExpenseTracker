@@ -2,23 +2,8 @@ import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function ExpenseItem({ id, description, amount, category, onDelete }) {
-    const confirmDelete = () => {
-        Alert.alert(
-            'Delete Expense',
-            'Are you sure you want to delete this expense?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => onDelete(id),
-                }
-            ]
-        );
-    };
-    
     return (
-        <Pressable onLongPress={confirmDelete}>
+        <Pressable onLongPress={onDelete}>
             <View style={styles.card}>
                 <MaterialIcons 
                     name="attach-money" 
@@ -33,8 +18,7 @@ export default function ExpenseItem({ id, description, amount, category, onDelet
                 </View>
             </View>
         </Pressable>
-        
-    )
+    );
 }
 
 const styles = StyleSheet.create({
