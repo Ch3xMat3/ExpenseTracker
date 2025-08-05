@@ -14,6 +14,9 @@ export default function ExpensesScreen({ expenses, onDeleteExpense }) {
         );
     };
 
+    // Sort expenses by date (most recent first)
+    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+
     const renderExpenseItem = ({ item }) => (
         <ExpenseItem
             description={item.description}
@@ -35,7 +38,7 @@ export default function ExpensesScreen({ expenses, onDeleteExpense }) {
     return (
         <View style={styles.container}>
             <FlatList
-                data={expenses}
+                data={sortedExpenses}
                 keyExtractor={(item) => item.id}
                 renderItem={renderExpenseItem}
                 contentContainerStyle={{ paddingBottom: 20 }}
