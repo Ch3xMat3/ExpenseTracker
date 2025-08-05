@@ -79,10 +79,12 @@ export default function App() {
         categories={categories}
         onAddCategory={addCategoryHandler}
       />
-      <Button
-        title="Add New Category"
-        onPress={() => setIsCategoryModalVisible(true)}
-      />
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Add New Category"
+          onPress={() => setIsCategoryModalVisible(true)}
+        />
+      </View>
       <AddCategoryModal
         visible={isCategoryModalVisible}
         onAddCategory={addCategoryHandler}
@@ -115,6 +117,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    width: '60%',
+    alignSelf: 'center',
     marginBottom: 20,
   },
 });
