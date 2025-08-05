@@ -20,14 +20,22 @@ A simple and intuitive mobile app built with **React Native** and **Expo** for t
 <table>
     <thead>
       <th>Main Landing Page</th>
+      <th>Add Expense Category</th>
       <th>Expense Listing page</th>
+      <th>Expense Filtering Menu</th>
     </thead>
     <tr>
         <td>
-            <img src="assets/AddExpense.jpg" alt="Screenshot of app landing page on phone" Width="250" />
+            <img src="assets/ExpenseHomePage.jpg" alt="Screenshot of app landing page on phone" Width="200" />
         </td>
         <td>
-            <img src="assets/ListExpense.jpg" alt="Screenshot of app Expense Listing page on phone" Width="250" />
+            <img src="assets/AddExpenseCategory.jpg" alt="Screenshot of app Expense Listing page on phone" Width="200" />
+        </td>
+        <td>
+            <img src="assets/ExpenseListPage.jpg" alt="Screenshot of app landing page on phone" Width="200" />
+        </td>
+        <td>
+            <img src="assets/ExpenseFilterPage.jpg" alt="Screenshot of app Expense Listing page on phone" Width="200" />
         </td>
     </tr>
 </table>
@@ -92,6 +100,7 @@ This project uses the following libraries and are installed automatically when r
 - **react-native** - Framework for building native apps using React
 - **react-native-safe-area-context** - Handles safe area insets on modern phones
 - **react-native-screens** - Optimized screen management for navigation
+- **@react-native-community/datetimepicker** - Native date and time picker component for React Native
 
 ### Development Dependencies
 
