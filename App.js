@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState(['Food', 'Travel', 'Utilities', 'Shopping']);
+  const [categories, setCategories] = useState(['Food', 'Utilities', 'Travel', 'Shopping']);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
 
   // Load expenses from AsyncStorage on app startup
@@ -46,19 +46,6 @@ export default function App() {
     saveExpenses();
   }, [expenses]);
 
-  // Save categories when changed
-  useEffect(() => {
-    const saveCategories = async () => {
-      try {
-        await AsyncStorage.setItem('categories', JSON.stringify(categories));
-      } catch (error) {
-        console.error('Failed to save categories', error);
-      }
-    };
-    
-    saveCategories();
-  }, [categories]);
-
   // Add expense
   const addExpenseHandler = (expense) => {
     const newExpense = { id: Math.random().toString(), ...expense };
@@ -70,9 +57,18 @@ export default function App() {
     setExpenses((currentExpenses) => currentExpenses.filter((expense) => expense.id !== id));
   };
 
-  // Add category
-  const addCategoryHandler = (newCategory) => {
-    setCategories((currentCategories) => [...currentCategories, newCategory]);
+  // Add category & Save category
+  const addCategoryHandler = async (newCategory) => {
+    const updatedCategories = [...categories, newCategory];
+    setCategories(updatedCategories);
+
+    try {
+      await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
+      console.log('Categories saved:', updatedCategories);
+    } catch (error) {
+      console.error('Failed to save categories:', error);
+    }
+
     setIsCategoryModalVisible(false);
   };
 
@@ -108,11 +104,13 @@ export default function App() {
   }
 
   // Screen to display the list of expenses
-  function ExpensesListScreen() {
+  function ExpensesListScreen({ navigation }) {
     return (
       <ExpensesScreen
+        navigation={navigation}
         expenses={expenses}
         onDeleteExpense={deleteExpenseHandler}
+        categories={categories}
       />
     );
   }

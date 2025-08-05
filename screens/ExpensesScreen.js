@@ -1,29 +1,39 @@
-import { useState } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { useState, useEffect, useLayoutEffect } from 'react';
+import { View, FlatList, StyleSheet, Text, Alert, Modal, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import ExpenseItem from '../components/ExpenseItem';
+import ExpenseFilters from '../components/ExpenseFilters';
 
-export default function ExpensesScreen({ expenses, onDeleteExpense }) {
-    const [selectedCategory, setSelectedCategory] = useState('');
+export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense, categories }) {
+    const [filterVisible, setFilterVisible] = useState(false);
+    const [filteredExpenses, setFilteredExpenses] = useState([]);
+
+    // Sort all expenses by date (newest first) on load or when expenses change
+    useEffect(() => {
+        const sortedExpenses = [...expenses].sort(
+            (a, b) => new Date(b.date) - new Date(a.date)
+        );
+        setFilteredExpenses(sortedExpenses);
+    }, [expenses]);
+
+    // Set header with filter icon
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={() => setFilterVisible(true)} style={{ marginRight: 10 }}>
+                    <MaterialIcons name="filter-list" size={24} color="#000" />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     // Confirm before deleting an expense
     const confirmDelete = (id) => {
-        Alert.alert(
-            'Delete Expense',
-            'Are you sure you want to delete this expense?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () => onDeleteExpense(id) },
-            ]
-        );
+        Alert.alert('Delete Expense', 'Are you sure you want to delete this expense?', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => onDeleteExpense(id) },
+        ]);
     };
-
-    // Sort expenses by date (most recent first)
-    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    const displayedExpenses = selectedCategory
-        ? sortedExpenses.filter(exp => exp.category === selectedCategory)
-        : sortedExpenses;
 
     const renderExpenseItem = ({ item }) => (
         <ExpenseItem
@@ -34,75 +44,77 @@ export default function ExpensesScreen({ expenses, onDeleteExpense }) {
             onDelete={() => confirmDelete(item.id)}
         />
     );
-    
-    if (expenses.length === 0) {
-        return (
-            <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No Expenses found.</Text>
-            </View>
-        );
-    }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.filterLabel}>Filter by Category:</Text>
-            <View style={styles.dropdownWrapper}>
-                <Picker
-                    selectedValue={selectedCategory}
-                    onValueChange={(value) => setSelectedCategory(value)}
-                    style={styles.picker}
-                    dropdownIconColor="#555"
-                >
-                    <Picker.Item label="All" value="" />
-                    {[...new Set(expenses.map(e => e.category))].map((cat) => (
-                        <Picker.Item key={cat} label={cat} value={cat} />
-                    ))}
-                </Picker>
-            </View>
-            <FlatList
-                data={displayedExpenses}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderExpenseItem}
-                contentContainerStyle={{ paddingBottom: 20 }}
+            <ExpenseFilters
+                visible={filterVisible}
+                onClose={() => setFilterVisible(false)}
+                categories={categories}
+                onApplyFilters={({ selectedCategory, startDate, endDate, exactDate }) => {
+                    const normalizeDate = (date) => {
+                        const d = new Date(date);
+                        d.setHours(0, 0, 0, 0);
+                        return d;
+                    };
+
+                    const filtered = expenses.filter((expense) => {
+                        const expenseDate = normalizeDate(expense.date);
+                        
+                        let matchesExactDate = true;
+                        if (exactDate) {
+                            matchesExactDate = expenseDate.getTime() === normalizeDate(exactDate).getTime();
+                        }
+
+                        const matchesCategory = selectedCategory
+                            ? expense.category === selectedCategory
+                            : true;
+
+                        const matchesStart = startDate 
+                            ? expenseDate.getTime() >= normalizeDate(startDate).getTime()
+                            : true;
+
+                        const matchesEnd = endDate
+                            ? expenseDate.getTime() <= normalizeDate(endDate).getTime()
+                            : true;
+
+                        const dateMatches = exactDate ? matchesExactDate : (matchesStart && matchesEnd);
+
+                        return matchesCategory && dateMatches;
+                    });
+
+                    // Sort filtered list from newest to oldest
+                    const sorted = [...filtered].sort(
+                        (a, b) => new Date(b.date) - new Date(a.date)
+                    );
+
+                    setFilteredExpenses(sorted);
+                    setFilterVisible(false);
+                }}
             />
+
+            {filteredExpenses.length === 0 ? (
+                <Text style={styles.noExpensesText}>No Expenses Found.</Text>
+            ) : (
+                <FlatList
+                    data={filteredExpenses}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderExpenseItem}
+                />
+            )}
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10,
+        padding: 16,
     },
-    emptyContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 18,
-        color: '#888',
-    },
-    pickerContainer: {
-        marginHorizontal: 16,
-        marginBottom: 12,
-    },
-    filterLabel: {
+    noExpensesText: {
+        textAlign: 'center',
+        marginTop: 20,
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    dropdownWrapper: {
-        borderWidth: 1,
-        borderColor: '#ccc', // light gray border
-        borderRadius: 8,
-        overflow: 'hidden', // important for rounded corners on android
-        marginBottom: 10,
-        backgroundColor: '#fff',
-    },
-    picker: {
-        height: 55,
-        width: '100%',
-        paddingHorizontal: 8,
+        color: '#666',
     },
 });
