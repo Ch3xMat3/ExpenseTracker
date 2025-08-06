@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ExpenseInput from './components/ExpenseInput';
 import ExpensesScreen from './screens/ExpensesScreen';
+import GraphsScreen from './screens/GraphsScreen';
 import AddCategoryModal from './components/AddCategoryModal';
 import MenuModal from './components/MenuModal';
 
@@ -145,6 +146,11 @@ export default function App() {
           name="ExpensesList"
           component={ExpensesListScreen}
           options={{ title: 'Expenses List' }}
+        />
+        <Stack.Screen
+          name="ExpensesGraph"
+          component={GraphsScreen}
+          options={{ title: 'Expense Graphs' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

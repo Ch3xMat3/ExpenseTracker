@@ -27,31 +27,41 @@ export default function MenuModal({ visible, onClose, navigation }) {
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Animated.View style={[styles.modalContainer, { transform: [{ translateY: slideAnim }] }, ]}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <Ionicons name="close" size={24} color="black" />
+            </TouchableOpacity>
 
-          <Text style={styles.title}>Menu</Text>
+            <Text style={styles.title}>Menu</Text>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              onClose();
-              navigation.navigate('AddExpense');
-            }}
-          >
-            <Text style={styles.menuText}>Add Expense</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                onClose();
+                navigation.navigate('AddExpense');
+                }}
+            >
+                <Text style={styles.menuText}>Add Expense</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              onClose();
-              navigation.navigate('ExpensesList');
-            }}
-          >
-            <Text style={styles.menuText}>View Expenses</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                onClose();
+                navigation.navigate('ExpensesList');
+                }}
+            >
+                <Text style={styles.menuText}>View Expenses</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                    onClose();
+                    navigation.navigate('ExpensesGraph');
+                }}
+            >
+                <Text style={styles.menuItem}>View Expense Graphs</Text>
+            </TouchableOpacity>
         </Animated.View>
       </Pressable>
     </Modal>
