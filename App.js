@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StyleSheet, View, Text, Button } from 'react-native';
+import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ExpenseInput from './components/ExpenseInput';
 import ExpensesScreen from './screens/ExpensesScreen';
 import AddCategoryModal from './components/AddCategoryModal';
+import MenuModal from './components/MenuModal';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +17,7 @@ export default function App() {
   const [expenses, setExpenses] = useState([]);
   const [categories, setCategories] = useState(['Food', 'Utilities', 'Travel', 'Shopping']);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   // Load expenses from AsyncStorage on app startup
   useEffect(() => {
@@ -74,6 +77,16 @@ export default function App() {
 
   // Screen to add expenses, categories, and open category modal
   function AddExpenseScreen({ navigation }) {
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ marginRight: 16 }}>
+            <Ionicons name="menu" size={24} color="black" />
+          </TouchableOpacity>
+        ),
+      });
+    }, [navigation]);
+
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Expense tracker App!</Text>
@@ -99,6 +112,11 @@ export default function App() {
             onPress={() => navigation.navigate('ExpensesList')}
           />
         </View>
+        <MenuModal
+          visible={menuVisible}
+          onClose={() => setMenuVisible(false)}
+          navigation={navigation}
+        />
       </View>
     );
   }

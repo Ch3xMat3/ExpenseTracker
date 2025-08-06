@@ -1,12 +1,15 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
 import { View, FlatList, StyleSheet, Text, Alert, Modal, TouchableOpacity } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+
 import ExpenseItem from '../components/ExpenseItem';
 import ExpenseFilters from '../components/ExpenseFilters';
+import MenuModal from '../components/MenuModal';
 
 export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense, categories }) {
     const [filterVisible, setFilterVisible] = useState(false);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
+    const [menuVisible, setMenuVisible] = useState(false);
 
     // Sort all expenses by date (newest first) on load or when expenses change
     useEffect(() => {
@@ -20,9 +23,14 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity onPress={() => setFilterVisible(true)} style={{ marginRight: 10 }}>
-                    <MaterialIcons name="filter-list" size={24} color="#000" />
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', gap: 15, marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => setFilterVisible(true)} style={{ marginRight: 10 }}>
+                        <MaterialIcons name="filter-alt" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setMenuVisible(true)}>
+                        <Ionicons name="menu" size={24} color="#000" />
+                    </TouchableOpacity>
+                </View>
             )
         });
     }, [navigation]);
@@ -102,6 +110,12 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
                     renderItem={renderExpenseItem}
                 />
             )}
+
+            <MenuModal
+                visible={menuVisible}
+                onClose={() => setMenuVisible(false)}
+                navigation={navigation}
+            />
         </View>
     );
 };
