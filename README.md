@@ -101,6 +101,8 @@ This project uses the following libraries and are installed automatically when r
 - **react-native-safe-area-context** - Handles safe area insets on modern phones
 - **react-native-screens** - Optimized screen management for navigation
 - **@react-native-community/datetimepicker** - Native date and time picker component for React Native
+- **react-native-chart-kit** - Simple and customizable chart components
+- **react-native-svg** - Allows the chart kit and other components to render vector graphics
 
 ### Development Dependencies
 

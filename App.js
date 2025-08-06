@@ -134,6 +134,17 @@ export default function App() {
     );
   }
 
+  // Screen to display the expenses with graphs
+  function GraphsScreenPage({ navigation }) {
+    return (
+      <GraphsScreen
+        navigation={navigation}
+        expenses={expenses}
+        categories={categories}
+      />
+    );
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -149,7 +160,7 @@ export default function App() {
         />
         <Stack.Screen
           name="ExpensesGraph"
-          component={GraphsScreen}
+          component={GraphsScreenPage}
           options={{ title: 'Expense Graphs' }}
         />
       </Stack.Navigator>

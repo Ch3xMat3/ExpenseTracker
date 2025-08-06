@@ -1,11 +1,34 @@
-import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useLayoutEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { PieChart } from 'react-native-chart-kit';
 import { Ionicons } from '@expo/vector-icons';
 
 import MenuModal from '../components/MenuModal';
 
-export default function GraphsScreen({ navigation }) {
+const screenWidth = Dimensions.get('window').width;
+
+export default function GraphsScreen({ navigation, expenses, categories }) {
     const [menuVisible, setMenuVisible] = useState(false);
+
+    // Aggregate expense totals per category
+    const chartData = useMemo(() => {
+        const totals = categories.map(category => {
+            const total = expenses
+                .filter(exp => exp.category === category)
+                .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            
+            return {
+                name: category,
+                amount: total,
+                color: getRandomColor(),
+                legendFontColor: '#000',
+                legendFontSize: 14,
+            };
+        });
+
+        // Remove categories with 0 amount
+        return totals.filter(t => t.amount > 0);
+    }, [expenses, categories]);
 
     // Set header with menu icon on the right
     useLayoutEffect(() => {
@@ -23,6 +46,37 @@ export default function GraphsScreen({ navigation }) {
         <View style={styles.container}>
             <Text style={styles.title}>Expense Graphs</Text>
 
+            {chartData.length > 0 ? (
+                <View style={styles.chartWrapper}>
+                    <PieChart
+                        data={chartData}
+                        width={screenWidth * 0.8}
+                        height={220}
+                        chartConfig={{
+                            backgroundColor: '#fff',
+                            backgroundGradientFrom: '#fff',
+                            backgroundGradientTo: '#fff',
+                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                        }}
+                        accessor="amount"
+                        backgroundColor="transparent"
+                        paddingLeft={screenWidth * 0.2}
+                        hasLegend={false}
+                    />
+                </View>
+            ) : (
+                <Text style={styles.noData}>No data to display</Text>
+            )}
+
+            <View style={styles.legendContainer}>
+                {chartData.map((item, index) => (
+                    <View key={index} style={styles.legendItem}>
+                        <View style={[styles.colorBox, { backgroundColor: item.color }]} />
+                        <Text style={styles.legendText}>{item.name}: ${item.amount.toFixed(2)}</Text>
+                    </View>
+                ))}
+            </View>
+
             <MenuModal
                 visible={menuVisible}
                 onClose={() => setMenuVisible(false)}
@@ -32,15 +86,51 @@ export default function GraphsScreen({ navigation }) {
     );
 }
 
+// Simple color generator
+function getRandomColor() {
+  const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#8AFFC1', '#FFA07A', '#20B2AA', '#9370DB'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
+    container: {
+        flex: 1,
+        paddingTop: 50,
+        paddingHorizontal: 20,
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    noData: {
+        textAlign: 'center',
+        marginTop: 40,
+        fontSize: 16,
+        color: '#666',
+    },
+    chartWrapper: {
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    legendContainer: {
+        marginTop: 20,
+    },
+    legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+        colorBox: {
+        width: 16,
+        height: 16,
+        marginRight: 8,
+        borderRadius: 4,
+    },
+        legendText: {
+        fontSize: 14,
+        color: '#000',
+    },
 });
