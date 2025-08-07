@@ -1,12 +1,14 @@
 // SettingsScreen.js
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableOpacity, Pressable, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import MenuModal from '../components/MenuModal';
+import EditCategoriesModal from '../components/EditCategoriesModal';
 
 export default function SettingsScreen({ navigation, categories }) {
     const [menuVisible, setMenuVisible] = useState(false);
+    const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
 
     // Set header with menu icon on the right
     useLayoutEffect(() => {
@@ -22,7 +24,17 @@ export default function SettingsScreen({ navigation, categories }) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Settings</Text>
-
+            <View style={styles.buttonContainer}>
+                <Button
+                    title="Edit Category Colors"
+                    onPress={() => setIsCategoryModalVisible(true)}
+                />
+            </View>
+            <EditCategoriesModal
+                visible={isCategoryModalVisible}
+                onClose={() => setIsCategoryModalVisible(false)}
+                categories={categories}
+            />
             <MenuModal
                 visible={menuVisible}
                 onClose={() => setMenuVisible(false)}
@@ -41,5 +53,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+  },
+  buttonContainer: {
+    width: '60%',
+    alignSelf: 'center',
+    marginBottom: 20,
+    marginTop: 20,
   },
 });
