@@ -18,12 +18,12 @@ A simple and intuitive mobile app built with **React Native** and **Expo** for t
 ## 📸 Screenshot
 
 <table>
-    <thead>
+    <tr>
       <th>Main Landing Page</th>
       <th>Add Expense Category</th>
       <th>Expense Listing page</th>
       <th>Expense Filtering Menu</th>
-    </thead>
+    </tr>
     <tr>
         <td>
             <img src="assets/ExpenseHomePage.jpg" alt="Screenshot of app landing page on phone" Width="200" />
@@ -37,6 +37,27 @@ A simple and intuitive mobile app built with **React Native** and **Expo** for t
         <td>
             <img src="assets/ExpenseFilterPage.jpg" alt="Screenshot of app Expense Listing page on phone" Width="200" />
         </td>
+    </tr>
+    <tr>
+        <th>Expense Graphs Page</th>
+        <th>Settings Page</th>
+        <th>Edit Category Color Page</th>
+        <th>Wheel Color Picker</th>
+    </tr>
+        <td>
+            <img src="assets/ExpenseGraphs.jpg" alt="Screenshot of app Expense Graphs page on phone" Width="200" />
+        </td>
+        <td>
+            <img src="assets/Settings.jpg" alt="Screenshot of app Settings page on phone" Width="200" />
+        </td>
+        <td>
+            <img src="assets/EditCategoryColor.jpg" alt="Screenshot of app Edit Category Color page on phone" Width="200" />
+        </td>
+        <td>
+            <img src="assets/ColorPicker.jpg" alt="Screenshot of app Color Picker on phone" Width="200" />
+        </td>
+    <tr>
+
     </tr>
 </table>
 
@@ -103,6 +124,7 @@ This project uses the following libraries and are installed automatically when r
 - **@react-native-community/datetimepicker** - Native date and time picker component for React Native
 - **react-native-chart-kit** - Simple and customizable chart components
 - **react-native-svg** - Allows the chart kit and other components to render vector graphics
+- **react-native-wheel-color-picker** - Wheel color picker
 
 ### Development Dependencies
 
