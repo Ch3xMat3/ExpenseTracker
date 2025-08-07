@@ -1,12 +1,12 @@
 // SettingsScreen.js
-import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity, Pressable, Modal, ScrollView } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import MenuModal from '../components/MenuModal';
 import EditCategoriesModal from '../components/EditCategoriesModal';
 
-export default function SettingsScreen({ navigation, categories }) {
+export default function SettingsScreen({ navigation, categories, onSaveUpdatedCategories }) {
     const [menuVisible, setMenuVisible] = useState(false);
     const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
 
@@ -34,6 +34,7 @@ export default function SettingsScreen({ navigation, categories }) {
                 visible={isCategoryModalVisible}
                 onClose={() => setIsCategoryModalVisible(false)}
                 categories={categories}
+                onSaveUpdatedCategories={onSaveUpdatedCategories} // passed down
             />
             <MenuModal
                 visible={menuVisible}

@@ -114,6 +114,15 @@ export default function App() {
     }
   };
 
+  const handleUpdateCategoryColor = async (updatedCategories) => {
+    setCategories(updatedCategories)
+    try {
+      await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
+    } catch (error) {
+      console.error('Failed to save updated categories', error);
+    }
+  };
+
   const generateUniqueColor = (existingColors) => {
     let color;
     do {
@@ -200,6 +209,7 @@ export default function App() {
       <SettingsScreen
         navigation={navigation}
         categories={categories}
+        onSaveUpdatedCategories={handleUpdateCategoryColor}
       />
     )
   }
