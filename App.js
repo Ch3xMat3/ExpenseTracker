@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ExpenseInput from './components/ExpenseInput';
 import ExpensesScreen from './screens/ExpensesScreen';
 import GraphsScreen from './screens/GraphsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import AddCategoryModal from './components/AddCategoryModal';
 import MenuModal from './components/MenuModal';
 
@@ -193,6 +194,16 @@ export default function App() {
     );
   }
 
+  // Screen for editing Settings
+  function SettingsScreenPage({ navigation }) {
+    return (
+      <SettingsScreen
+        navigation={navigation}
+        categories={categories}
+      />
+    )
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -210,6 +221,11 @@ export default function App() {
           name="ExpensesGraph"
           component={GraphsScreenPage}
           options={{ title: 'Expense Graphs' }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreenPage}
+          options={{ title: 'Settings' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

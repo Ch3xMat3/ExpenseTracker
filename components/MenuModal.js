@@ -60,7 +60,17 @@ export default function MenuModal({ visible, onClose, navigation }) {
                     navigation.navigate('ExpensesGraph');
                 }}
             >
-                <Text style={styles.menuItem}>View Expense Graphs</Text>
+                <Text style={styles.menuText}>View Expense Graphs</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => {
+                    onClose();
+                    navigation.navigate('Settings');
+                }}
+            >
+                <Text style={styles.menuText}>Settings</Text>
             </TouchableOpacity>
         </Animated.View>
       </Pressable>
