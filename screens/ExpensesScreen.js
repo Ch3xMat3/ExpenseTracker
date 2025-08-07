@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert, Modal, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 import ExpenseItem from '../components/ExpenseItem';
@@ -10,6 +10,9 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
     const [filterVisible, setFilterVisible] = useState(false);
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [menuVisible, setMenuVisible] = useState(false);
+
+    // Helper to get category object by name
+    const getCategoryObject = (name) => categories.find((cat) => cat.name === name);
 
     // Sort all expenses by date (newest first) on load or when expenses change
     useEffect(() => {
@@ -43,15 +46,18 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
         ]);
     };
 
-    const renderExpenseItem = ({ item }) => (
-        <ExpenseItem
-            description={item.description}
-            date={item.date}
-            amount={item.amount}
-            category={item.category}
-            onDelete={() => confirmDelete(item.id)}
-        />
-    );
+    const renderExpenseItem = ({ item }) => {
+        const categoryObj = getCategoryObject(item.category);
+        return (
+            <ExpenseItem
+                description={item.description}
+                date={item.date}
+                amount={item.amount}
+                category={categoryObj?.name || item.category}
+                onDelete={() => confirmDelete(item.id)}
+            />
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -118,7 +124,7 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
             />
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {

@@ -45,7 +45,7 @@ export default function ExpenseFilters({visible, onClose, onApplyFilters, catego
                 >
                 <Picker.Item label="All Categories" value="" />
                 {categories.map((cat) => (
-                    <Picker.Item key={cat} label={cat} value={cat} />
+                    <Picker.Item key={cat.name} label={cat.name} value={cat.name} />
                 ))}
                 </Picker>
             </View>

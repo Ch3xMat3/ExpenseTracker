@@ -7,14 +7,14 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 export default function ExpenseInput({ onAddExpense, categories }) {
   const [enteredDescription, setEnteredDescription] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(categories[0] || '');
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]?.name || '');
   const [selectedDate, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Sync selectedCategory when categories change
   useEffect(() => {
-    if (!categories.includes(selectedCategory)) {
-      setSelectedCategory(categories[0] || '');
+    if (!categories.some(cat => cat.name === selectedCategory)) {
+      setSelectedCategory(category[0]?.name || '');
     }
   }, [categories]);
 
@@ -36,7 +36,7 @@ export default function ExpenseInput({ onAddExpense, categories }) {
     // Clear inputs
     setEnteredDescription('');
     setEnteredAmount('');
-    setSelectedCategory(categories[0] || '');
+    setSelectedCategory(categories[0]?.name || '');
   };
 
   const onChangeDate = (event, pickedDate) => {
@@ -68,7 +68,7 @@ export default function ExpenseInput({ onAddExpense, categories }) {
             style={styles.picker}
         >
             {categories.map((cat) => (
-                <Picker.Item label={cat} value={cat} key={cat} />
+                <Picker.Item label={cat.name} value={cat.name} key={cat.name} />
             ))}
         </Picker>
       </View>

@@ -12,7 +12,8 @@ export default function AddCategoryModal({ visible, onAddCategory, onClose, cate
             return;
         }
 
-        if (categories.includes(trimmed)) {
+        const nameExists = categories.some(cat => cat.name.toLowerCase() === trimmed.toLowerCase());
+        if (nameExists) {
             Alert.alert('Duplicate', 'Category already exists.');
             return;
         }

@@ -14,13 +14,13 @@ export default function GraphsScreen({ navigation, expenses, categories }) {
     const chartData = useMemo(() => {
         const totals = categories.map(category => {
             const total = expenses
-                .filter(exp => exp.category === category)
+                .filter(exp => exp.category === category.name)
                 .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
             
             return {
-                name: category,
+                name: category.name,
                 amount: total,
-                color: getRandomColor(),
+                color: category.color,
                 legendFontColor: '#000',
                 legendFontSize: 14,
             };
@@ -84,12 +84,6 @@ export default function GraphsScreen({ navigation, expenses, categories }) {
             />
         </View>
     );
-}
-
-// Simple color generator
-function getRandomColor() {
-  const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#8AFFC1', '#FFA07A', '#20B2AA', '#9370DB'];
-  return colors[Math.floor(Math.random() * colors.length)];
 }
 
 const styles = StyleSheet.create({

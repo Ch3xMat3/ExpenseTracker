@@ -14,9 +14,30 @@ import MenuModal from './components/MenuModal';
 
 const Stack = createNativeStackNavigator();
 
+const resetCategories = async () => {
+  const defaultCategories = [
+    { name: 'Food', color: '#FF6384' },
+    { name: 'Travel', color: '#36A2EB' },
+    { name: 'Utilities', color: '#FFCE56' },
+    { name: 'Shopping', color: '#4BC0C0' },
+  ];
+  try {
+    await AsyncStorage.setItem('categories', JSON.stringify(defaultCategories));
+    alert('Categories reset to default!');
+  } catch (error) {
+    console.error('Failed to reset categories', error);
+  }
+};
+
 export default function App() {
   const [expenses, setExpenses] = useState([]);
-  const [categories, setCategories] = useState(['Food', 'Utilities', 'Travel', 'Shopping']);
+  const [categories, setCategories] = useState([
+    { name: 'Food', color: '#FF6384' }, 
+    { name: 'Utilities', color: '#36A2EB' }, 
+    { name: 'Travel', color: '#FFCE56' }, 
+    { name: 'Shopping', color: '#8AFFC1' }
+  ]);
+
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -28,7 +49,22 @@ export default function App() {
         if (storedExpenses) setExpenses(JSON.parse(storedExpenses));
 
         const storedCategories = await AsyncStorage.getItem('categories');
-        if (storedCategories) setCategories(JSON.parse(storedCategories));
+        if (storedCategories) {
+          const parsed = JSON.parse(storedCategories);
+          // Ensure that the stored categories are in object format
+          const isValid = parsed.every(cat => typeof cat === 'object' && cat.name && cat.color);
+          if (isValid) {
+            setCategories(parsed);
+          } else {
+            // fallback: convert old format to new format
+            const converted = parsed.map(name => ({
+              name,
+              color: generateUniqueColor([]),
+            }));
+            setCategories(converted);
+            await AsyncStorage.setItem('categories', JSON.stringify(converted));
+          }
+        }
       } catch (error) {
         console.error('Failed to load expenses:', error);
       }
@@ -63,17 +99,26 @@ export default function App() {
 
   // Add category & Save category
   const addCategoryHandler = async (newCategory) => {
-    const updatedCategories = [...categories, newCategory];
-    setCategories(updatedCategories);
+    const newColor = generateUniqueColor(categories.map(cat => cat.color));
+    const newCategoryColor = { name: newCategory, color: newColor };
+    const updated = [...categories, newCategoryColor];
+
+    setCategories(updated);
+    setIsCategoryModalVisible(false);
 
     try {
-      await AsyncStorage.setItem('categories', JSON.stringify(updatedCategories));
-      console.log('Categories saved:', updatedCategories);
+      await AsyncStorage.setItem('categories', JSON.stringify(updated));
     } catch (error) {
       console.error('Failed to save categories:', error);
     }
+  };
 
-    setIsCategoryModalVisible(false);
+  const generateUniqueColor = (existingColors) => {
+    let color;
+    do {
+      color = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    } while (existingColors.includes(color));
+    return color;
   };
 
   // Screen to add expenses, categories, and open category modal
@@ -112,6 +157,9 @@ export default function App() {
             title="View Expenses"
             onPress={() => navigation.navigate('ExpensesList')}
           />
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button title="Reset Categories" onPress={resetCategories} />
         </View>
         <MenuModal
           visible={menuVisible}
