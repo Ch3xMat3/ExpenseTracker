@@ -51,7 +51,7 @@ A simple and intuitive mobile app built with **React Native** and **Expo** for t
             <img src="assets/Settings.jpg" alt="Screenshot of app Settings page on phone" Width="200" />
         </td>
         <td>
-            <img src="assets/EditCategoryColor.jpg" alt="Screenshot of app Edit Category Color page on phone" Width="200" />
+            <img src="assets/EditCategoryColors.jpg" alt="Screenshot of app Edit Category Color page on phone" Width="200" />
         </td>
         <td>
             <img src="assets/ColorPicker.jpg" alt="Screenshot of app Color Picker on phone" Width="200" />
