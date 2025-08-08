@@ -1,10 +1,13 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 import ExpenseItem from '../components/ExpenseItem';
 import ExpenseFilters from '../components/ExpenseFilters';
 import MenuModal from '../components/MenuModal';
+import { showToast } from '../utils/showToast';
 
 export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense, categories }) {
     const [filterVisible, setFilterVisible] = useState(false);
@@ -22,21 +25,57 @@ export default function ExpensesScreen ({ navigation, expenses, onDeleteExpense,
         setFilteredExpenses(sortedExpenses);
     }, [expenses]);
 
+    // helper function for toast or alert
+    const handleExportPress = async () => {
+        try {
+            // Convert expenses to CSV format
+            const csvHeader = 'Date,Category,Description,Amount\n';
+            const csvRows = filteredExpenses.map(exp => {
+                const date = new Date(exp.date).toLocaleDateString();
+                return `"${date}","${exp.category}","${exp.description}",${exp.amount}`;
+            });
+            const csvString = csvHeader + csvRows.join('\n');
+
+            // Create file path
+            const fileUri = FileSystem.documentDirectory + 'expenses_export.csv';
+
+            // Write CSV to file
+            await FileSystem.writeAsStringAsync(fileUri, csvString, {
+                encoding: FileSystem.EncodingType.UTF8,
+            });
+
+            // Open share dialog
+            await Sharing.shareAsync(fileUri, {
+                mimeType: 'text/csv',
+                dialogTitle: 'Export Expenses CSV',
+                UTI: 'public.comma-separated-values-text',
+            });
+
+            // Show success alert after sharing
+            showToast('Export succcessful! File saved on your device.');
+        } catch (error) {
+            showToast('Error exporting CSV: ' + error.message);
+        }
+    }
+
     // Set header with filter icon
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <View style={{ flexDirection: 'row', gap: 15, marginRight: 10 }}>
-                    <TouchableOpacity onPress={() => setFilterVisible(true)} style={{ marginRight: 10 }}>
+                    <TouchableOpacity onPress={handleExportPress} style={{ marginHorizontal: 8 }}>
+                        <Ionicons name="download-outline" size={24} color="black" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setFilterVisible(true)} style={{ marginHorizontal: 8 }}>
                         <MaterialIcons name="filter-alt" size={24} color="#000" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setMenuVisible(true)}>
+                    <TouchableOpacity onPress={() => setMenuVisible(true)} style={{ marginHorizontal: 8 }}>
                         <Ionicons name="menu" size={24} color="#000" />
                     </TouchableOpacity>
                 </View>
             )
         });
-    }, [navigation]);
+    }, [navigation, handleExportPress]);
 
     // Confirm before deleting an expense
     const confirmDelete = (id) => {

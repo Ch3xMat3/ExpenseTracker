@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, StyleSheet, Button, FlatList, TouchableOpacity } from 'react-native';
 
 import CategoryColorPickerModal from './CategoryColorPickerModal';
+import { showToast } from '../utils/showToast';
 
 const EditCategoriesModal = ({ visible, categories, onClose, onSaveUpdatedCategories }) => {
     const [editedCategories, setEditedCategories] = useState([...categories]);
@@ -33,7 +34,11 @@ const EditCategoriesModal = ({ visible, categories, onClose, onSaveUpdatedCatego
             return;
         }
 
+        // Save
         onSaveUpdatedCategories(editedCategories);
+        // Show toast notification
+        showToast('Category colors saved successfully.');
+        // Close
         onClose();
     }
 
