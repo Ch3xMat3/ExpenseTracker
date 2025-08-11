@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, ToastAndroid, Alert, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
